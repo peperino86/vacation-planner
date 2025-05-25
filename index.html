@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizzatore Vacanze di Gruppo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border-radius: 15px;
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+        }
+
+        .participants-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .participant-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid #f0f0f0;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .participant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .participant-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .participant-info {
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .availability-dates {
+            background: #e8f5e8;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .results-section {
+            background: linear-gradient(135deg, #a8e6cf, #7fcdcd);
+            color: #333;
+        }
+
+        .match-result {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .match-score {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+
+        .date-range {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .participants-available {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .no-results {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 40px;
+        }
+
+        .date-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .date-inputs {
+                grid-template-columns: 1fr;
+            }
+            
+            .participants-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .preferences-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .budget-display {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .duration-display {
+            background: #d1ecf1;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 4px solid #17a2b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏖️ Organizzatore Vacanze di Gruppo</h1>
+            <p>Trova il momento perfetto per partire tutti insieme!</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Sezione Aggiunta Partecipanti -->
+            <div class="section">
+                <h2>👥 Aggiungi Partecipante</h2>
+                <div class="form-group">
+                    <label for="participantName">Nome del partecipante:</label>
+                    <input type="text" id="participantName" placeholder="Es. Marco">
+                </div>
+                
+                <div class="date-inputs">
+                    <div class="form-group">
+                        <label for="availableFrom">Disponibile dal:</label>
+                        <input type="date" id="availableFrom">
+                    </div>
+                    <div class="form-group">
+                        <label for="availableTo">Disponibile fino al:</label>
+                        <input type="date" id="availableTo">
+                    </div>
+                </div>
+
+                <div class="preferences-grid">
+                    <div class="form-group">
+                        <label for="minDuration">Durata minima (giorni):</label>
+                        <select id="minDuration">
+                            <option value="3">3 giorni</option>
+                            <option value="5">5 giorni</option>
+                            <option value="7" selected>7 giorni</option>
+                            <option value="10">10 giorni</option>
+                            <option value="14">14 giorni</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="maxBudget">Budget massimo (€):</label>
+                        <select id="maxBudget">
+                            <option value="500">500€</option>
+                            <option value="800">800€</option>
+                            <option value="1000" selected>1000€</option>
+                            <option value="1500">1500€</option>
+                            <option value="2000">2000€</option>
+                            <option value="3000">3000+€</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="preferences">Preferenze particolari:</label>
+                    <textarea id="preferences" rows="3" placeholder="Es. Preferisco evitare agosto, voglio andare al mare, non posso partire di lunedì..."></textarea>
+                </div>
+
+                <button class="btn" onclick="addParticipant()">Aggiungi Partecipante</button>
+            </div>
+
+            <!-- Lista Partecipanti -->
+            <div class="section">
+                <h2>👨‍👩‍👧‍👦 Partecipanti Registrati</h2>
+                <div id="participantsList" class="participants-list">
+                    <div class="no-results">Nessun partecipante aggiunto ancora. Inizia aggiungendo il primo!</div>
+                </div>
+            </div>
+
+            <!-- Risultati Matching -->
+            <div class="section results-section">
+                <h2>🎯 Periodi Consigliati</h2>
+                <button class="btn" onclick="findBestMatches()">Trova Periodi Migliori</button>
+                <div id="resultsContainer">
+                    <div class="no-results">Aggiungi almeno 2 partecipanti e clicca "Trova Periodi Migliori" per vedere i risultati!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let participants = [];
+        let nextId = 1;
+
+        function addParticipant() {
+            const name = document.getElementById('participantName').value.trim();
+            const availableFrom = document.getElementById('availableFrom').value;
+            const availableTo = document.getElementById('availableTo').value;
+            const minDuration = parseInt(document.getElementById('minDuration').value);
+            const maxBudget = parseInt(document.getElementById('maxBudget').value);
+            const preferences = document.getElementById('preferences').value.trim();
+
+            if (!name || !availableFrom || !availableTo) {
+                alert('Per favore compila tutti i campi obbligatori!');
+                return;
+            }
+
+            if (new Date(availableFrom) >= new Date(availableTo)) {
+                alert('La data di fine deve essere successiva alla data di inizio!');
+                return;
+            }
+
+            const participant = {
+                id: nextId++,
+                name: name,
+                availableFrom: availableFrom,
+                availableTo: availableTo,
+                minDuration: minDuration,
+                maxBudget: maxBudget,
+                preferences: preferences
+            };
+
+            participants.push(participant);
+            updateParticipantsList();
+            clearForm();
+        }
+
+        function clearForm() {
+            document.getElementById('participantName').value = '';
+            document.getElementById('availableFrom').value = '';
+            document.getElementById('availableTo').value = '';
+            document.getElementById('minDuration').value = '7';
+            document.getElementById('maxBudget').value = '1000';
+            document.getElementById('preferences').value = '';
+        }
+
+        function removeParticipant(id) {
+            participants = participants.filter(p => p.id !== id);
+            updateParticipantsList();
+        }
+
+        function updateParticipantsList() {
+            const container = document.getElementById('participantsList');
+            
+            if (participants.length === 0) {
+                container.innerHTML = '<div class="no-results">Nessun partecipante aggiunto ancora. Inizia aggiungendo il primo!</div>';
+                return;
+            }
+
+            container.innerHTML = participants.map(p => `
+                <div class="participant-card">
+                    <div class="participant-name">${p.name}</div>
+                    <div class="participant-info">📅 Dal ${formatDate(p.availableFrom)} al ${formatDate(p.availableTo)}</div>
+                    <div class="duration-display">⏱️ Durata minima: ${p.minDuration} giorni</div>
+                    <div class="budget-display">💰 Budget max: ${p.maxBudget}€</div>
+                    ${p.preferences ? `<div class="participant-info">💭 ${p.preferences}</div>` : ''}
+                    <button class="btn btn-danger" onclick="removeParticipant(${p.id})">Rimuovi</button>
+                </div>
+            `).join('');
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('it-IT');
+        }
+
+        function findBestMatches() {
+            if (participants.length < 2) {
+                alert('Serve almeno 2 partecipanti per trovare i periodi comuni!');
+                return;
+            }
+
+            const matches = calculateMatches();
+            displayResults(matches);
+        }
+
+        function calculateMatches() {
+            const allDates = [];
+            const today = new Date();
+            
+            // Trova il range comune di date
+            let earliestStart = new Date(Math.max(...participants.map(p => new Date(p.availableFrom))));
+            let latestEnd = new Date(Math.min(...participants.map(p => new Date(p.availableTo))));
+
+            if (earliestStart >= latestEnd) {
+                return [];
+            }
+
+            const matches = [];
+            const maxDuration = Math.max(...participants.map(p => p.minDuration));
+            
+            // Genera possibili periodi di vacanza
+            for (let duration = maxDuration; duration <= 21; duration += 2) {
+                let currentDate = new Date(earliestStart);
+                
+                while (currentDate <= new Date(latestEnd.getTime() - duration * 24 * 60 * 60 * 1000)) {
+                    let endDate = new Date(currentDate.getTime() + duration * 24 * 60 * 60 * 1000);
+                    
+                    const availableParticipants = participants.filter(p => {
+                        const pStart = new Date(p.availableFrom);
+                        const pEnd = new Date(p.availableTo);
+                        return currentDate >= pStart && endDate <= pEnd && duration >= p.minDuration;
+                    });
+
+                    if (availableParticipants.length >= 2) {
+                        const score = calculateScore(availableParticipants, duration, currentDate);
+                        matches.push({
+                            startDate: new Date(currentDate),
+                            endDate: new Date(endDate),
+                            duration: duration,
+                            participants: availableParticipants,
+                            score: score
+                        });
+                    }
+                    
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+            }
+
+            // Ordina per punteggio e rimuovi duplicati simili
+            return matches
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 10)
+                .filter((match, index, arr) => {
+                    return !arr.slice(0, index).some(prev => 
+                        Math.abs(prev.startDate - match.startDate) < 7 * 24 * 60 * 60 * 1000
+                    );
+                });
+        }
+
+        function calculateScore(availableParticipants, duration, startDate) {
+            let score = 0;
+            
+            // Più partecipanti = punteggio più alto
+            score += availableParticipants.length * 100;
+            
+            // Percentuale di partecipanti disponibili
+            score += (availableParticipants.length / participants.length) * 50;
+            
+            // Preferenza per durate ottimali (7-14 giorni)
+            if (duration >= 7 && duration <= 14) {
+                score += 30;
+            }
+            
+            // Bonus per weekend
+            const dayOfWeek = startDate.getDay();
+            if (dayOfWeek === 5 || dayOfWeek === 6) { // Venerdì o Sabato
+                score += 20;
+            }
+            
+            // Budget compatibility
+            const avgBudget = availableParticipants.reduce((sum, p) => sum + p.maxBudget, 0) / availableParticipants.length;
+            if (avgBudget >= 1000) {
+                score += 15;
+            }
+            
+            return Math.round(score);
+        }
+
+        function displayResults(matches) {
+            const container = document.getElementById('resultsContainer');
+            
+            if (matches.length === 0) {
+                container.innerHTML = '<div class="no-results">😔 Non sono stati trovati periodi compatibili per tutti. Prova ad aggiustare le date di disponibilità!</div>';
+                return;
+            }
+
+            container.innerHTML = matches.map((match, index) => `
+                <div class="match-result">
+                    <div class="match-score">🏆 Punteggio: ${match.score}/100 ${index === 0 ? '(MIGLIORE)' : ''}</div>
+                    <div class="date-range">📅 Dal <strong>${formatDate(match.startDate.toISOString().split('T')[0])}</strong> al <strong>${formatDate(match.endDate.toISOString().split('T')[0])}</strong></div>
+                    <div class="participants-available">
+                        👥 <strong>${match.participants.length}/${participants.length}</strong> partecipanti disponibili: 
+                        ${match.participants.map(p => p.name).join(', ')}
+                    </div>
+                    <div class="participants-available">⏱️ Durata: ${match.duration} giorni</div>
+                    <div class="participants-available">💰 Budget medio disponibile: ${Math.round(match.participants.reduce((sum, p) => sum + p.maxBudget, 0) / match.participants.length)}€</div>
+                </div>
+            `).join('');
+        }
+
+        // Inizializza con alcune date di default
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate());
+            const threeMonthsLater = new Date(today.getFullYear(), today.getMonth() + 4, today.getDate());
+            
+            document.getElementById('availableFrom').value = nextMonth.toISOString().split('T')[0];
+            document.getElementById('availableTo').value = threeMonthsLater.toISOString().split('T')[0];
+        });
+    </script>
+</body>
+</html>
